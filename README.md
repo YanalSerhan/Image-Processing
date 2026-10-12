@@ -1,28 +1,28 @@
 # Image Processing Coursework
 
-This repository contains a set of image-processing assignments implemented in Python using OpenCV, NumPy, Matplotlib, and scikit-learn. The goal of the work was to learn and apply core computer-vision and image-analysis techniques, including filtering, histogram analysis, transforms, image restoration, and multi-image blending.
+This repository contains a collection of image-processing and computer-vision assignments completed in Python. The work focuses on practical techniques such as histogram analysis, image restoration, Fourier-domain processing, geometric transformations, template matching, and image blending.
 
 ## Repository structure
 
 - `HW1/`
   - `TranscribeHistogram.py` — histogram-based image transcription and student counting
-  - `HW1 - answers.pdf` — assignment solution notes
+  - `HW1 - answers.pdf` — assignment report and solution summary
 - `HW2/`
-  - `q1/imageFix.py` — contrast and brightness enhancement for damaged images
-  - `q2/puzzleSolver.py` — image stitching and puzzle reconstruction using affine/perspective transforms
+  - `q1/imageFix.py` — contrast enhancement and image fixing
+  - `q2/puzzleSolver.py` — puzzle reconstruction using geometric transforms
   - `HW2 report.pdf` — assignment report
 - `HW3/`
-  - `q1/bonus.py` — image filtering and MSE comparison for multiple filter types
-  - `q2/BilateralCleaning.py` — bilateral filtering for denoising grayscale images
-  - `q3/fixImg.py` — image restoration using median/Gaussian filters and averaging noisy images
+  - `q1/bonus.py` — filter experiments and MSE comparison
+  - `q2/BilateralCleaning.py` — edge-preserving denoising
+  - `q3/fixImg.py` — restoration with smoothing and averaging
   - `report.pdf` — assignment report
 - `HW4/`
-  - `q2/zebra.py` — Fourier-domain resizing and spectrum analysis
-  - `q3/main.py` and `BadImagesFixing.py` — restoring degraded images through transform, Fourier, and filter-based techniques
+  - `q2/zebra.py` — Fourier-domain scaling and spectrum analysis
+  - `q3/main.py` and `BadImagesFixing.py` — restoration of degraded images
   - `report.pdf` — assignment report
 - `HW5/`
-  - `q1/matchFaces.py` — template matching and face detection using NCC and scaling
-  - `q2/blendFruits.py` and `blend2.py` — Laplacian pyramid blending of two fruit images
+  - `q1/matchFaces.py` — template matching and detection
+  - `q2/blendFruits.py` and `blend2.py` — Laplacian pyramid blending
   - `report.pdf` — assignment report
 
 ## Technologies used
@@ -40,17 +40,24 @@ This repository contains a set of image-processing assignments implemented in Py
 
 ### `HW1/TranscribeHistogram.py`
 
-This script reads a set of images from a folder and analyzes them using cumulative histograms and K-means quantization.
+This script reads images from `data` and `numbers`, converts them to grayscale, reduces their bit depth using K-means quantization, and compares cumulative histograms to identify the matching number pattern.
 
 What it does:
-- loads grayscale images from `data` and `numbers`
-- converts images to a reduced number of intensity levels using K-means clustering (`quantization`)
-- computes cumulative histograms for each image and compares them against a set of reference number templates
-- identifies which number is most similar to the bar pattern in each image
-- uses thresholding to isolate bar regions
-- estimates bar heights and prints the histogram output for each image
+- loads image folders and extracts grayscale images
+- quantizes intensities using K-means clustering
+- computes cumulative histograms for each image
+- compares the target histogram against numbered reference histograms
+- thresholds the image to isolate bar regions
+- estimates bar heights and prints the final histogram outputs
 
-This project is essentially a form of visual OCR, where the code tries to interpret image content from its histogram structure.
+This project demonstrates a basic image-recognition pipeline based on histogram comparison.
+
+Assignment reference:
+- [HW1 - answers.pdf](HW1/HW1%20-%20answers.pdf)
+
+Screenshot:
+
+![Histogram transcription output](HW1/HW1%20-%20answers.pdf)
 
 ---
 
@@ -58,28 +65,32 @@ This project is essentially a form of visual OCR, where the code tries to interp
 
 ### `HW2/q1/imageFix.py`
 
-This file focuses on fixing damaged or low-contrast images.
+This file corrects damaged or low-contrast images by applying image-enhancement techniques.
 
 What it does:
-- applies brightness/contrast stretching using `BaCS`
-- performs gamma correction with `gamma_correction`
-- uses histogram equalization with `histogram_eq`
-- saves corrected versions of the images as `*_fixed.jpg`
+- applies brightness and contrast stretching
+- performs gamma correction
+- uses histogram equalization
+- saves corrected output images such as `1_fixed.jpg`, `2_fixed.jpg`, and `3_fixed.jpg`
 
-The purpose is to improve image visibility and contrast before further analysis.
+Screenshot:
+
+![Image fix result](HW2/q1/2_fixed.jpg)
 
 ### `HW2/q2/puzzleSolver.py`
 
-This script reconstructs puzzle pieces by aligning them using geometric transforms.
+This script reconstructs puzzle pieces by aligning them using affine and perspective transforms.
 
 What it does:
-- reads matched landmark points from `matches.txt`
-- computes an affine or perspective transform matrix with `cv2.getAffineTransform` or `cv2.getPerspectiveTransform`
-- warps each puzzle piece into the coordinate space of the base image
-- stitches the transformed pieces together to form the final puzzle image
-- saves the result as `solution.jpg`
+- reads matched points from `matches.txt`
+- computes transform matrices with OpenCV
+- warps each puzzle piece into the base image coordinate system
+- stitches all pieces together to reconstruct the final puzzle
+- saves the assembled result as `solution.jpg`
 
-This is a practical example of using homography/affine alignment in image stitching.
+Screenshot:
+
+![Puzzle solution](HW2/q2/puzzles/puzzle_affine_2/solution.jpg)
 
 ---
 
@@ -87,51 +98,47 @@ This is a practical example of using homography/affine alignment in image stitch
 
 ### `HW3/q1/bonus.py`
 
-This file applies multiple filtering methods to one image and evaluates the result using Mean Squared Error (MSE).
+This script applies many different filters to an image and compares them using Mean Squared Error (MSE).
 
 What it does:
-- defines custom filters for each image condition, including:
-  - horizontal averaging
-  - box blur
-  - median blur
-  - vertical smoothing
-  - high-boost/sharpening
-  - edge enhancement
-  - row swapping and reconstruction
-  - unsharp-like filtering
-- applies each filter to the target image
-- saves the outputs as `filtered_image_1.jpg` to `filtered_image_9.jpg`
-- computes the MSE between the filtered output and the original image or target reference
+- applies horizontal/vertical averaging filters
+- performs median blur and Gaussian-based filtering
+- tests sharpening-style kernels
+- evaluates filter quality numerically through MSE
+- writes each filtered output to `filtered_image_1.jpg` ... `filtered_image_9.jpg`
 
-This assignment was about learning how different filters affect image content and how to compare their quality numerically.
+Screenshot:
+
+![Filtered image](HW3/q1/filtered_image_5.jpg)
 
 ### `HW3/q2/BilateralCleaning.py`
 
-This code performs bilateral filtering to denoise grayscale images while preserving edges.
+This code denoises grayscale images while preserving edges using bilateral filtering.
 
 What it does:
-- extracts a neighborhood around each pixel
+- extracts a local neighborhood around each pixel
 - computes spatial and intensity weights
-- applies a bilateral filter to reduce noise while protecting edges
-- runs the filter on several sample images such as `NoisyGrayImage.png`, `balls.jpg`, and `taj.jpg`
-- saves denoised results as `denoised_img0.png`, `denoised_img1.png`, and `denoised_img2.png`
+- applies weighted averaging to reduce noise without blurring edges
+- writes denoised outputs for several example images
 
-This is a classic edge-preserving denoising technique often used in computer vision.
+Screenshot:
+
+![Denoised image](HW3/q2/denoised_img1.png)
 
 ### `HW3/q3/fixImg.py`
 
-This script restores a damaged image using several smoothing operations and a noise-averaging strategy.
+This script restores a damaged image using repeated smoothing and averaging.
 
 What it does:
-- loads the broken image (`broken.jpg`)
-- applies repeated median and Gaussian smoothing
-- applies a bilateral filter for further cleanup
-- saves the intermediate result as `semi_fixed.jpg`
-- loads a stack of noisy versions of the image from `noised_images.npy`
-- computes the mean image to reduce random noise
-- saves the final restored version as `HQ_fix_.jpg`
+- applies median and Gaussian blur repeatedly
+- smooths with a bilateral filter
+- saves the intermediate fixed image
+- averages multiple noisy versions of the image to reduce random noise
+- writes the final result as `HQ_fix_.jpg`
 
-This demonstrates denoising by combining repeated filtering and averaging multiple noisy observations.
+Screenshot:
+
+![Restored image](HW3/q3/HQ_fix_.jpg)
 
 ---
 
@@ -139,43 +146,35 @@ This demonstrates denoising by combining repeated filtering and averaging multip
 
 ### `HW4/q2/zebra.py`
 
-This script uses the Fourier transform to resize and analyze the zebra image in frequency space.
+This script works in the Fourier domain to analyze and resize the zebra image.
 
 What it does:
 - converts the image to grayscale
 - computes the 2D FFT and visualizes the magnitude spectrum
 - pads the Fourier spectrum to enlarge the image
 - reconstructs the resized image using inverse FFT
-- creates a version with multiple copies of the Fourier spectrum and displays the resulting reconstruction
 - saves the final output as `zebra_scaled.png`
 
-This project shows how resizing and image synthesis can be performed in the frequency domain.
+Screenshot:
+
+![Zebra Fourier result](HW4/q2/zebra_scaled.png)
 
 ### `HW4/q3/BadImagesFixing.py`
 
-This file restores multiple degraded images using several problem-specific methods.
+This file restores several degraded images using custom image-specific methods.
 
 What it does:
-- `clean_baby` — uses perspective transforms and median filtering to remove overlapping, distorted regions
-- `find_peaks` — finds dominant frequency peaks in the Fourier spectrum
-- `clean_windmill` — removes strong spectral peaks to reduce periodic artifacts
-- `clean_watermelon` — applies a high-pass filter to sharpen the image
-- `clean_umbrella` — compensates for a frequency-domain shift caused by motion or misalignment
-- `clean_USAflag` — preserves the original region while smoothing the rest of the image
-- `clean_house` — removes motion blur by dividing in the Fourier domain
-- `clean_bears` — uses histogram equalization to improve contrast
+- `clean_baby` uses perspective transformation and median filtering
+- `clean_windmill` removes periodic artifacts via frequency-domain peak suppression
+- `clean_watermelon` sharpens with a high-pass kernel
+- `clean_umbrella` compensates for a frequency shift
+- `clean_USAflag` preserves a region while smoothing the rest
+- `clean_house` removes motion blur in the Fourier domain
+- `clean_bears` improves contrast through histogram equalization
 
 ### `HW4/q3/main.py`
 
-This script orchestrates the restoration of the seven damaged images.
-
-What it does:
-- loads each `.tif` image from the `Images` directory
-- converts it to grayscale
-- applies the corresponding cleanup function
-- displays original vs cleaned image side-by-side for comparison
-
-This is a demonstration of task-specific restoration techniques for different types of image degradation.
+This script loads each degraded image from the `Images` folder and applies the appropriate fix, then displays the original and restored image side by side.
 
 ---
 
@@ -183,69 +182,73 @@ This is a demonstration of task-specific restoration techniques for different ty
 
 ### `HW5/q1/matchFaces.py`
 
-This file performs template matching to detect a pattern (face template) inside larger images.
+This file detects a template image inside larger images using normalized cross-correlation.
 
 What it does:
-- scales images and templates using Fourier-domain resizing and bicubic interpolation
-- computes the normalized cross-correlation (NCC) between the template and image windows
-- suppresses duplicate matches using non-maximum suppression
-- adjusts match coordinates back to the original image scale
-- draws rectangles around detected matches and saves the output as `students_result.jpg` and `thecrew_result.jpg`
+- scales the image and template to improve matching
+- computes NCC across sliding windows
+- removes duplicate detections with non-maximum suppression
+- rescales found coordinates back to the original image size
+- draws rectangles around detections and saves results
 
-This is a classic image-matching workflow used for object detection and template localization.
+Screenshot:
+
+![Face detection result](HW5/q1/students_result.jpg)
 
 ### `HW5/q2/blendFruits.py`
 
-This script blends two fruit images using a Laplacian pyramid.
+This script blends two images using a Laplacian pyramid.
 
 What it does:
-- computes a Laplacian pyramid for each image
-- creates a blending mask across the center of the image
-- mixes the pyramid levels using that mask
-- reconstructs the blended image from the blended pyramid
+- creates Laplacian pyramids for each image
+- creates a mask that transitions from one image to the other
+- combines the pyramid levels using the mask
+- reconstructs the final blended image
 - saves the result as `result.jpg`
 
-This is a multi-scale blending technique that preserves detail and avoids harsh seam artifacts.
+Screenshot:
+
+![Fruit blend result](HW5/q2/result.jpg)
 
 ### `HW5/q2/blend2.py`
 
-This is a second version of fruit blending using Gaussian/Laplacian pyramids and mask-based reconstruction.
+This is a second version of the image blending task using Gaussian/Laplacian pyramids and a mask.
 
 What it does:
-- loads `apple.jpg` and `orange.jpg`
-- resizes them to the same dimensions
-- creates a vertical mask that separates the left and right halves
-- builds Gaussian and Laplacian pyramids for both images
-- blends corresponding pyramid layers using the mask
-- reconstructs the final output and saves it as `blended.jpg`
+- loads both fruit images
+- resizes them to match dimensions
+- builds a blend mask
+- blends matching pyramid levels
+- reconstructs the final image and saves it as `blended.jpg`
 
-This version is a more direct implementation of pyramidal image blending.
+Screenshot:
+
+![Blended apple-orange image](HW5/q2/blended.jpg)
 
 ---
 
-## Final notes
+## Summary
 
-This repository is mainly an academic image-processing project that combines:
+This repository is a practical coursework collection covering the most important parts of digital image processing:
 - enhancement and restoration
-- filtering and Fourier analysis
-- segmentation and template matching
-- geometric transformation and stitching
-- multi-scale image blending
+- denoising and filtering
+- Fourier-domain analysis
+- geometric transforms and stitching
+- object/template detection
+- pyramid-based multi-image blending
 
-Together, the assignments provide a broad introduction to practical computer vision and digital image processing using Python.
+Together, these assignments provide a solid introduction to real-world computer vision workflows in Python.
 
 ## Running the code
 
-Most scripts are meant to be run from their respective folders, with the relevant images present in the same directory.
+Most scripts are intended to be run from the directory in which they are stored, with the relevant images available locally.
 
-Example:
+Examples:
 
 ```bash
 cd HW1
 python TranscribeHistogram.py
 ```
-
-or:
 
 ```bash
 cd HW5/q2
@@ -254,4 +257,4 @@ python blendFruits.py
 
 ## License
 
-No explicit license file is present in the repository. Please check with the repository owner before reusing the code for publication or redistribution.
+No explicit license file is included in this repository. Please check with the repository owner before reusing or redistributing the code or assignment files beyond personal study.
